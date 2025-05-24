@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>Hostess</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE160</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.1.7.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.1.7.Final</version>
+        </dependency>
+        <!-- Checkbox list dependency -->
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-oss</artifactId>
+            <version>3.6.18</version>
+        </dependency>
+        <!-- IntelliJ GUI -->
+        <dependency>
+            <groupId>com.jetbrains.intellij.java</groupId>
+            <artifactId>java-gui-forms-rt</artifactId>
+            <version>${intellij.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jetbrains.intellij.java</groupId>
+            <artifactId>java-compiler-ant-tasks</artifactId>
+            <version>${intellij.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <intellij.version>233.15026.9</intellij.version>
+    </properties>
+    <repositories>
+        <repository>
+            <id>jetbrains.releases</id>
+            <url>https://www.jetbrains.com/intellij-repository/releases</url>
+        </repository>
+        <repository>
+            <id>jetbrains.3rdparty</id>
+            <url>https://cache-redirector.jetbrains.com/intellij-dependencies</url>
+        </repository>
+    </repositories>
+    <!-- Support for IntelliJ GUI with maven -->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <path id="j2sp">
+                                    <pathelement location="${project.basedir}/src/main/java"/>
+                                </path>
+                                <path id="j2cp">
+                                    <fileset dir="${settings.localRepository}/com/jidesoft/jide-oss/3.6.18" includes="**/*.jar"/>
+                                </path>
+                                <taskdef name="javac2" classpathref="maven.runtime.classpath" classname="com.intellij.ant.Javac2"/>
+                                <javac2 destdir="${project.basedir}/target/classes">
+                                    <src refid="j2sp"/>
+                                    <classpath refid="j2cp"/>
+                                    <classpath refid="maven.runtime.classpath"/>
+                                </javac2>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Random BS -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>es.hostess.app.gui2.MainGUI2</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- Random BS 2-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
